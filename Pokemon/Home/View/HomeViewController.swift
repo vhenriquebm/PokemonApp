@@ -70,10 +70,8 @@ extension HomeViewController {
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeCollectionViewCell.identifier, for: indexPath) as! HomeCollectionViewCell
         
-      
-            let pokemon = pokemons[indexPath.row]
-            
-            cell.configure(pokemon: pokemon)
+        let pokemon = pokemons[indexPath.row + 1]
+        cell.configure(pokemon: pokemon)
         
         
         return cell
