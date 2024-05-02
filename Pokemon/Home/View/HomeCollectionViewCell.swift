@@ -85,5 +85,22 @@ class HomeCollectionViewCell: UICollectionViewCell {
             guard let url = URL(string: pokemon.imageUrl ?? "") else { return }
             pokemonImage.sd_setImage(with: url)
         }
+        
+        configureLongPressGesture()
+    }
+    
+    private func configureLongPressGesture() {
+        let gesture = UILongPressGestureRecognizer(target: self,
+                                                   action: #selector(showDetails))
+        
+        addGestureRecognizer(gesture)
+    }
+    
+    @objc private func showDetails(sender: UILongPressGestureRecognizer) {
+        if sender.state == .began {
+            print ("It is working")
+            
+        }
+        
     }
 }

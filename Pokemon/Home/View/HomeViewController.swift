@@ -10,6 +10,13 @@ import UIKit
 class HomeViewController: UICollectionViewController {
     private var pokemons:[Pokemon?] = []
     
+    private var pokemonInfoView: PokemonInfoView = {
+        let view = PokemonInfoView()
+        view.layer.cornerRadius = 5
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
@@ -39,6 +46,20 @@ class HomeViewController: UICollectionViewController {
         
         collectionView.register(HomeCollectionViewCell.self, forCellWithReuseIdentifier: HomeCollectionViewCell.identifier)
         
+        view.addSubview(pokemonInfoView)
+        configureConstraints()
+    }
+    
+    private func configureConstraints() {
+        NSLayoutConstraint.activate([
+            
+            pokemonInfoView.heightAnchor.constraint(equalToConstant: 500),
+            pokemonInfoView.widthAnchor.constraint(equalToConstant: view.frame.width - 64),
+            
+            pokemonInfoView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            pokemonInfoView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+
+        ])
     }
     
     private func configureNavigationBar() {

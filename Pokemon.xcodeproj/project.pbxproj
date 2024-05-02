@@ -18,6 +18,7 @@
 		4240153C2BB74DFD00AEEA97 /* CustomNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4240153B2BB74DFD00AEEA97 /* CustomNavigation.swift */; };
 		424015402BB7584600AEEA97 /* PokemonService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4240153F2BB7584600AEEA97 /* PokemonService.swift */; };
 		424015432BB758B300AEEA97 /* Pokemon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424015422BB758B300AEEA97 /* Pokemon.swift */; };
+		42FE36052BE450250056085F /* PokemonInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42FE36042BE450250056085F /* PokemonInfoView.swift */; };
 		7DB3CCC230E79ACCF109EBAE /* Pods_Pokemon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 567F3E2FECAE2B8624B478C1 /* Pods_Pokemon.framework */; };
 /* End PBXBuildFile section */
 
@@ -36,6 +37,7 @@
 		4240153B2BB74DFD00AEEA97 /* CustomNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigation.swift; sourceTree = "<group>"; };
 		4240153F2BB7584600AEEA97 /* PokemonService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonService.swift; sourceTree = "<group>"; };
 		424015422BB758B300AEEA97 /* Pokemon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pokemon.swift; sourceTree = "<group>"; };
+		42FE36042BE450250056085F /* PokemonInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonInfoView.swift; sourceTree = "<group>"; };
 		567F3E2FECAE2B8624B478C1 /* Pods_Pokemon.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Pokemon.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		72A1A7F811ECB817F0F8873D /* Pods-Pokemon.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pokemon.debug.xcconfig"; path = "Target Support Files/Pods-Pokemon/Pods-Pokemon.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -82,6 +84,7 @@
 				424015282BB7413B00AEEA97 /* Assets.xcassets */,
 				4240152A2BB7413B00AEEA97 /* LaunchScreen.storyboard */,
 				4240152D2BB7413B00AEEA97 /* Info.plist */,
+				42FE36042BE450250056085F /* PokemonInfoView.swift */,
 			);
 			path = Pokemon;
 			sourceTree = "<group>";
@@ -280,6 +283,7 @@
 				424015242BB7413900AEEA97 /* HomeViewController.swift in Sources */,
 				424015432BB758B300AEEA97 /* Pokemon.swift in Sources */,
 				424015202BB7413900AEEA97 /* AppDelegate.swift in Sources */,
+				42FE36052BE450250056085F /* PokemonInfoView.swift in Sources */,
 				424015222BB7413900AEEA97 /* SceneDelegate.swift in Sources */,
 				4240153C2BB74DFD00AEEA97 /* CustomNavigation.swift in Sources */,
 				424015402BB7584600AEEA97 /* PokemonService.swift in Sources */,
