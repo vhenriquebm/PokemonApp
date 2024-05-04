@@ -17,11 +17,20 @@ class HomeViewController: UICollectionViewController {
         return view
     }()
     
+    private var visualEffectView: UIVisualEffectView = {
+        let blurEffect = UIBlurEffect(style: .dark)
+        let view = UIVisualEffectView(effect: blurEffect)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
         
         let service = PokemonService()
+        configureVisualEffectViewConstraints()
+        
         
         
         service.getPokemons { result in
@@ -46,8 +55,13 @@ class HomeViewController: UICollectionViewController {
         
         collectionView.register(HomeCollectionViewCell.self, forCellWithReuseIdentifier: HomeCollectionViewCell.identifier)
         
-        view.addSubview(pokemonInfoView)
-        configureConstraints()
+        configureVisualEffectView()
+        configureGesture()
+    }
+    
+    private func configureVisualEffectView() {
+        view.addSubview(visualEffectView)
+        visualEffectView.alpha = 0
     }
     
     private func configureConstraints() {
@@ -57,10 +71,43 @@ class HomeViewController: UICollectionViewController {
             pokemonInfoView.widthAnchor.constraint(equalToConstant: view.frame.width - 64),
             
             pokemonInfoView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            pokemonInfoView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-
+            pokemonInfoView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            
+            
+            
         ])
     }
+    
+    private func configureVisualEffectViewConstraints() {
+        NSLayoutConstraint.activate([
+            visualEffectView.topAnchor.constraint(equalTo: view.topAnchor),
+            visualEffectView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            visualEffectView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            visualEffectView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
+    }
+    
+    private func configureGesture() {
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(dismissInfoView))
+        
+        visualEffectView.addGestureRecognizer(gesture)
+        
+    }
+    
+    @objc private func dismissInfoView() {
+        dismissWithAnimation()
+    }
+    
+    func dismissWithAnimation(pokemon: Pokemon? = nil) {
+        UIView.animate(withDuration: 0.5) {
+            self.visualEffectView.alpha = 0
+            self.pokemonInfoView.alpha = 0
+            self.pokemonInfoView.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
+        } completion: { _ in
+            self.pokemonInfoView.removeFromSuperview()
+        }
+    }
+    
     
     private func configureNavigationBar() {
         navigationItem.title = "Pokedex"
@@ -92,6 +139,7 @@ extension HomeViewController {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeCollectionViewCell.identifier, for: indexPath) as! HomeCollectionViewCell
         
         let pokemon = pokemons[indexPath.row + 1]
+        cell.delegate = self
         cell.configure(pokemon: pokemon)
         
         
@@ -112,3 +160,41 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
         return UIEdgeInsets(top: 10, left: 4, bottom: 1, right: 4)
     }
 }
+
+//MARK: - HomeColleViewCellDelegate
+
+extension HomeViewController: HomeColleViewCellDelegate {
+    
+    func presentInfoView(with pokemon: Pokemon) {
+        pokemonInfoView.pokemon = pokemon // Defina o pokemon aqui
+        
+        // Adicione a PokemonInfoView à HomeViewController
+        view.addSubview(pokemonInfoView)
+        pokemonInfoView.delegate = self
+        visualEffectView.alpha = 1
+        
+        // Configure as restrições após adicionar a PokemonInfoView à HomeViewController
+        configureConstraints()
+        
+        pokemonInfoView.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
+        pokemonInfoView.alpha = 0
+        animateInfoView()
+    }
+    
+    private func animateInfoView() {
+        UIView.animate(withDuration: 0.5) {
+            self.pokemonInfoView.alpha = 1
+            self.pokemonInfoView.transform = .identity
+        }
+    }
+}
+
+// MARK: - InfoViewDelegate
+
+extension HomeViewController: InfoViewDelegate {
+    
+    func dismiss(with pokemon: Pokemon) {
+        dismissWithAnimation(pokemon: pokemon)
+    }
+}
+

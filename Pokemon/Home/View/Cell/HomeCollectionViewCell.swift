@@ -11,6 +11,9 @@ import SDWebImage
 class HomeCollectionViewCell: UICollectionViewCell {
     static var identifier = "HomeCollectionViewCell"
     
+    var delegate: HomeColleViewCellDelegate?
+    private var pokemon: Pokemon?
+    
     private lazy var pokemonImage: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
@@ -84,6 +87,7 @@ class HomeCollectionViewCell: UICollectionViewCell {
             self.pokemonLabel.text = pokemon.name
             guard let url = URL(string: pokemon.imageUrl ?? "") else { return }
             pokemonImage.sd_setImage(with: url)
+            self.pokemon = pokemon
         }
         
         configureLongPressGesture()
@@ -98,8 +102,8 @@ class HomeCollectionViewCell: UICollectionViewCell {
     
     @objc private func showDetails(sender: UILongPressGestureRecognizer) {
         if sender.state == .began {
-            print ("It is working")
-            
+            guard let pokemon = pokemon else { return }
+            delegate?.presentInfoView(with: pokemon)
         }
         
     }
