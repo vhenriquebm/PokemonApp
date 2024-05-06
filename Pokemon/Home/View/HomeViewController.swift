@@ -9,6 +9,7 @@ import UIKit
 
 class HomeViewController: UICollectionViewController {
     private var pokemons:[Pokemon?] = []
+    private var searchBar: UISearchBar?
     
     private var pokemonInfoView: PokemonInfoView = {
         let view = PokemonInfoView()
@@ -27,6 +28,7 @@ class HomeViewController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        configureSearchBar()
         
         let service = PokemonService()
         configureVisualEffectViewConstraints()
@@ -57,6 +59,18 @@ class HomeViewController: UICollectionViewController {
         
         configureVisualEffectView()
         configureGesture()
+    }
+    
+    private func configureSearchBar() {
+        searchBar = UISearchBar()
+        searchBar?.sizeToFit()
+        searchBar?.showsCancelButton = true
+        searchBar?.becomeFirstResponder()
+        searchBar?.tintColor = .white
+        searchBar?.delegate = self
+        
+        navigationItem.rightBarButtonItem = nil
+        navigationItem.titleView = searchBar
     }
     
     private func configureVisualEffectView() {
@@ -195,6 +209,21 @@ extension HomeViewController: InfoViewDelegate {
     
     func dismiss(with pokemon: Pokemon) {
         dismissWithAnimation(pokemon: pokemon)
+    }
+}
+
+// MARK: - UISearchBarDelegate
+
+extension HomeViewController: UISearchBarDelegate {
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        navigationItem.titleView = nil
+        
+        let barButton = UIBarButtonItem(barButtonSystemItem: .search,
+                                        target: self, action: #selector(search))
+        
+        barButton.tintColor = .white
+        
+        navigationItem.rightBarButtonItem =  barButton
     }
 }
 
