@@ -9,7 +9,9 @@ import UIKit
 
 class HomeViewController: UICollectionViewController {
     private var pokemons:[Pokemon?] = []
+    private var filteredPokemons: [Pokemon?] = []
     private var searchBar: UISearchBar?
+    private var inSearchMode = false
     
     private var pokemonInfoView: PokemonInfoView = {
         let view = PokemonInfoView()
@@ -33,8 +35,6 @@ class HomeViewController: UICollectionViewController {
         let service = PokemonService()
         configureVisualEffectViewConstraints()
         
-        
-        
         service.getPokemons { result in
             switch result {
             case let .success(pokemonData):
@@ -48,17 +48,17 @@ class HomeViewController: UICollectionViewController {
                 print ("DEBUG - Error to fetch pokemons: \(error.localizedDescription)")
             }
         }
-        
     }
     
     
     private func configureView() {
-        configureNavigationBar()
-        
+        navigationItem.title = "Pokedex"
         collectionView.register(HomeCollectionViewCell.self, forCellWithReuseIdentifier: HomeCollectionViewCell.identifier)
         
         configureVisualEffectView()
         configureGesture()
+        configureSearchBar()
+        configureSearchBarButton()
     }
     
     private func configureSearchBar() {
@@ -71,6 +71,15 @@ class HomeViewController: UICollectionViewController {
         
         navigationItem.rightBarButtonItem = nil
         navigationItem.titleView = searchBar
+    }
+    
+    private func configureSearchBarButton() {
+        let barButton = UIBarButtonItem(barButtonSystemItem: .search,
+                                        target: self, action: #selector(search))
+        
+        barButton.tintColor = .white
+        
+        navigationItem.rightBarButtonItem =  barButton
     }
     
     private func configureVisualEffectView() {
@@ -86,9 +95,6 @@ class HomeViewController: UICollectionViewController {
             
             pokemonInfoView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             pokemonInfoView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            
-            
-            
         ])
     }
     
@@ -105,7 +111,6 @@ class HomeViewController: UICollectionViewController {
         let gesture = UITapGestureRecognizer(target: self, action: #selector(dismissInfoView))
         
         visualEffectView.addGestureRecognizer(gesture)
-        
     }
     
     @objc private func dismissInfoView() {
@@ -122,21 +127,6 @@ class HomeViewController: UICollectionViewController {
         }
     }
     
-    
-    private func configureNavigationBar() {
-        navigationItem.title = "Pokedex"
-        
-        let barButton = UIBarButtonItem(barButtonSystemItem: .search,
-                                        target: self, action: #selector(search))
-        
-        barButton.tintColor = .white
-        
-        navigationItem.rightBarButtonItem =  barButton
-        
-    }
-    
-    
-    
     @objc private func search() {
         
     }
@@ -145,15 +135,16 @@ class HomeViewController: UICollectionViewController {
 extension HomeViewController {
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return pokemons.count
+        return inSearchMode ? filteredPokemons.count : pokemons.count
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeCollectionViewCell.identifier, for: indexPath) as! HomeCollectionViewCell
-        
-        let pokemon = pokemons[indexPath.row + 1]
         cell.delegate = self
+
+        let pokemon = inSearchMode ? filteredPokemons[indexPath.row] : pokemons[indexPath.row + 1]
+        
         cell.configure(pokemon: pokemon)
         
         
@@ -217,13 +208,23 @@ extension HomeViewController: InfoViewDelegate {
 extension HomeViewController: UISearchBarDelegate {
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         navigationItem.titleView = nil
-        
-        let barButton = UIBarButtonItem(barButtonSystemItem: .search,
-                                        target: self, action: #selector(search))
-        
-        barButton.tintColor = .white
-        
-        navigationItem.rightBarButtonItem =  barButton
+        inSearchMode = false
+        collectionView.reloadData()
+        configureSearchBarButton()
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchText.isEmpty {
+            inSearchMode = false
+            filteredPokemons = []
+        } else {
+            inSearchMode = true
+            filteredPokemons = pokemons.filter { pokemon in
+                guard let name = pokemon?.name else { return false }
+                return name.localizedCaseInsensitiveContains(searchText)
+            }
+        }
+        collectionView.reloadData()
     }
 }
 
