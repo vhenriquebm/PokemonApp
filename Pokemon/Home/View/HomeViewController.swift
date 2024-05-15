@@ -20,6 +20,13 @@ class HomeViewController: UICollectionViewController {
         return view
     }()
     
+    private var pokemonMoreInfoView: PokemonMoreInfoView = {
+        let view = PokemonMoreInfoView()
+        view.layer.cornerRadius = 5
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     private var visualEffectView: UIVisualEffectView = {
         let blurEffect = UIBlurEffect(style: .dark)
         let view = UIVisualEffectView(effect: blurEffect)
@@ -94,7 +101,17 @@ class HomeViewController: UICollectionViewController {
             pokemonInfoView.widthAnchor.constraint(equalToConstant: view.frame.width - 64),
             
             pokemonInfoView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            pokemonInfoView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            pokemonInfoView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+    }
+    
+    private func configureMoreInfoConstraints() {
+        NSLayoutConstraint.activate([
+            pokemonMoreInfoView.heightAnchor.constraint(equalToConstant: 500),
+            pokemonMoreInfoView.widthAnchor.constraint(equalToConstant: view.frame.width - 64),
+            
+            pokemonMoreInfoView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            pokemonMoreInfoView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
     
@@ -192,6 +209,13 @@ extension HomeViewController: HomeColleViewCellDelegate {
             self.pokemonInfoView.transform = .identity
         }
     }
+    
+    private func animateMoreInfoView() {
+        UIView.animate(withDuration: 0.5) {
+            self.pokemonMoreInfoView.alpha = 1
+            self.pokemonMoreInfoView.transform = .identity
+        }
+    }
 }
 
 // MARK: - InfoViewDelegate
@@ -200,6 +224,18 @@ extension HomeViewController: InfoViewDelegate {
     
     func dismiss(with pokemon: Pokemon) {
         dismissWithAnimation(pokemon: pokemon)
+    }
+    
+    func showMoreDetails(with pokemon: Pokemon) {
+        
+        print ("O pokemon na funcao é \(pokemon)")
+        pokemonMoreInfoView.pokemon = pokemon
+        view.addSubview(pokemonMoreInfoView)
+        visualEffectView.alpha = 1
+        configureMoreInfoConstraints()
+        pokemonMoreInfoView.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
+        pokemonMoreInfoView.alpha = 0
+        animateMoreInfoView()
     }
 }
 

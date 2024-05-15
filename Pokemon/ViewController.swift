@@ -15,6 +15,7 @@ class BaseViewController: UIViewController {
         configureBindings()
     }
     
-    private func configureViews() {}
-    private func configureBindings() {}
+    func configureViews() {}
+    func configureConstraints() {}
+    func configureBindings() {}
 }

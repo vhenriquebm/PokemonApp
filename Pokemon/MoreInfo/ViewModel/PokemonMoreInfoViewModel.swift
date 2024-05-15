@@ -7,4 +7,4 @@
 
 import Foundation
 
-class PokemonInfoViewModel {}
+class PokemonMoreInfoViewModel {}

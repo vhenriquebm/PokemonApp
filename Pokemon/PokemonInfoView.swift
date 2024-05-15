@@ -9,6 +9,7 @@ import UIKit
 
 protocol InfoViewDelegate {
     func dismiss(with pokemon: Pokemon)
+    func showMoreDetails(with pokemon: Pokemon)
 }
 
 class PokemonInfoView: UIView {
@@ -277,7 +278,11 @@ class PokemonInfoView: UIView {
     @objc private func showMoreInfo() {
         guard let pokemon = pokemon else { return }
         delegate?.dismiss(with: pokemon)
+        delegate?.showMoreDetails(with: pokemon)
+                
     }
+    
+    
 }
 
 
