@@ -8,6 +8,8 @@
 import UIKit
 
 class PokemonMoreInfoViewController: BaseViewController {
+    private var pokemon: Pokemon?
+    private var evolutions: [Pokemon]?
     
     private var pokemonMoreInfoView: PokemonMoreInfoView = {
         let view = PokemonMoreInfoView()
@@ -15,7 +17,6 @@ class PokemonMoreInfoViewController: BaseViewController {
         return view
     }()
     
-    private var pokemon: Pokemon?
     
     override func viewDidLoad() {
         super.viewDidLoad()

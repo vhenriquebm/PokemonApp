@@ -7,11 +7,17 @@
 
 import UIKit
 
+enum PokemonFlow {
+    case info
+    case moreInfo
+}
+
 class HomeViewController: UICollectionViewController {
     private var pokemons:[Pokemon?] = []
     private var filteredPokemons: [Pokemon?] = []
     private var searchBar: UISearchBar?
     private var inSearchMode = false
+    private var flow: PokemonFlow = .info
     
     private var pokemonInfoView: PokemonInfoView = {
         let view = PokemonInfoView()
@@ -131,16 +137,21 @@ class HomeViewController: UICollectionViewController {
     }
     
     @objc private func dismissInfoView() {
-        dismissWithAnimation()
+        switch self.flow {
+        case .info:
+            dismissWithAnimation(view: pokemonInfoView)
+        case .moreInfo:
+            dismissWithAnimation(view: pokemonMoreInfoView)
+        }
     }
     
-    func dismissWithAnimation(pokemon: Pokemon? = nil) {
+    func dismissWithAnimation(view: UIView, pokemon: Pokemon? = nil) {
         UIView.animate(withDuration: 0.5) {
             self.visualEffectView.alpha = 0
-            self.pokemonInfoView.alpha = 0
-            self.pokemonInfoView.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
+            view.alpha = 0
+            view.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
         } completion: { _ in
-            self.pokemonInfoView.removeFromSuperview()
+            view.removeFromSuperview()
         }
     }
     
@@ -188,14 +199,13 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
 extension HomeViewController: HomeColleViewCellDelegate {
     
     func presentInfoView(with pokemon: Pokemon) {
-        pokemonInfoView.pokemon = pokemon // Defina o pokemon aqui
+        pokemonInfoView.pokemon = pokemon
         
-        // Adicione a PokemonInfoView à HomeViewController
         view.addSubview(pokemonInfoView)
         pokemonInfoView.delegate = self
         visualEffectView.alpha = 1
+        self.flow = .info
         
-        // Configure as restrições após adicionar a PokemonInfoView à HomeViewController
         configureConstraints()
         
         pokemonInfoView.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
@@ -222,20 +232,50 @@ extension HomeViewController: HomeColleViewCellDelegate {
 
 extension HomeViewController: InfoViewDelegate {
     
-    func dismiss(with pokemon: Pokemon) {
-        dismissWithAnimation(pokemon: pokemon)
+    func dismiss(with pokemon: Pokemon, flow: PokemonFlow) {
+        
+        switch flow {
+        case .info:
+            dismissWithAnimation(view: pokemonInfoView, pokemon: pokemon)
+        case .moreInfo:
+            dismissWithAnimation(view: pokemonMoreInfoView, pokemon: pokemon)
+        }
     }
     
     func showMoreDetails(with pokemon: Pokemon) {
-        
-        print ("O pokemon na funcao é \(pokemon)")
+        self.flow = .moreInfo
         pokemonMoreInfoView.pokemon = pokemon
+        let evolutions = getEvolutions(with: pokemon)
+        pokemonMoreInfoView.evolutions = evolutions
         view.addSubview(pokemonMoreInfoView)
         visualEffectView.alpha = 1
         configureMoreInfoConstraints()
         pokemonMoreInfoView.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
         pokemonMoreInfoView.alpha = 0
         animateMoreInfoView()
+    }
+    
+    func getEvolutions(with pokemon: Pokemon) -> [Pokemon] {
+        guard let evolutionIds = pokemon.evolutionChain else { return [] }
+        var evolutions:[Pokemon] = []
+        
+        evolutionIds.forEach { evolution in
+            
+            pokemons.forEach { pokemon in
+                
+                if let pokemonId = pokemon?.id,
+                   let evolutionId = evolution.id,
+                   let value = Int(evolutionId){
+                    
+                    if pokemonId == value {
+                        if let pokemon = pokemon {
+                            evolutions.append(pokemon)
+                        }
+                    }
+                }
+            }
+        }
+        return evolutions
     }
 }
 
